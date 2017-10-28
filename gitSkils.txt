@@ -1,0 +1,188 @@
+2017年3月23日09:49:06    新建文件
+
+mkdir name ---新建文件夹
+cd name --- 进入文件夹
+git init 初始化仓库
+git status 查看运行结果 
+git diff 查看上次修改内容
+git log 查看日志
+$ git log --pretty=oneline 简要的 日志
+//版本回退 简要描述
+在Git中，用HEAD表示当前版本，也就是最新的提交3628164...882e1e0（注意我的提交ID和你的肯定不一样），上一个版本就是HEAD^，上一个版本就是HEAD^^，当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100。
+
+git reset --hard HEAD   ;回退到最近修改那个版本 
+
+git checkout -- readme.txt意思就是，把readme.txt文件在工作区的修改全部撤销，这里有两种情况：
+
+一种是readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+
+一种是readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+
+总之，就是让这个文件回到最近一次git commit或git add时的状态。
+
+ git commit -m "git tracks changes"   提交所选内容并添加一段注释
+git reset HEAD file可以把暂存区的修改撤销掉（unstage），重新放回工作区：
+git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
+
+git rm 用于删除一个文件如果一个文件已经被提交到版本库，那么你永远不用担心误删，但是要小心，你只能
+恢复文件到最新版本，你会丢失最近一次提交后你修改的内容。
+
+
+//远程仓库
+$ ssh-keygen -t rsa -C "youremail@example.com"   //创建
+
+添加公匙 到gitHub 
+$ git remote add origin git@github.com:passliang/MyStyle.git  //修改github登录名  将本地仓库与远程仓库关联
+
+要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
+//使用 HTTPS     git remote add origin https://github.com/passliang/MyStyle.git
+
+关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
+
+此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
+
+git clone命令克隆。
+
+Git支持多种协议，包括https，但通过ssh支持的原生git协议速度最快
+
+创建与合并分支
+
+阅读: 774523
+在版本回退里，你已经知道，每次提交，Git都把它们串成一条时间线，这条时间线就是一个分支。截止到目前，只有一条时间线，在Git里，这个分支叫主分支，即master分支。HEAD严格来说不是指向提交，而是指向master，master才是指向提交的，所以，HEAD指向的就是当前分支。
+
+一开始的时候，master分支是一条线，Git用master指向最新的提交，再用HEAD指向master，就能确定当前分支，以及当前分支的提交点：
+
+git-br-initial
+
+每次提交，master分支都会向前移动一步，这样，随着你不断提交，master分支的线也越来越长：
+
+
+0:00
+/ 0:19
+
+
+ 当我们创建新的分支，例如dev时，Git新建了一个指针叫dev，指向master相同的提交，再把HEAD指向dev，就表示当前分支在dev上：
+
+git-br-create
+
+你看，Git创建一个分支很快，因为除了增加一个dev指针，改改HEAD的指向，工作区的文件都没有任何变化！
+
+不过，从现在开始，对工作区的修改和提交就是针对dev分支了，比如新提交一次后，dev指针往前移动一步，而master指针不变：
+
+git-br-dev-fd
+
+假如我们在dev上的工作完成了，就可以把dev合并到master上。Git怎么合并呢？最简单的方法，就是直接把master指向dev的当前提交，就完成了合并：
+
+git-br-ff-merge
+
+所以Git合并分支也很快！就改改指针，工作区内容也不变！
+
+合并完分支后，甚至可以删除dev分支。删除dev分支就是把dev指针给删掉，删掉后，我们就剩下了一条master分支：
+
+git-br-rm
+
+真是太神奇了，你看得出来有些提交是通过分支完成的吗？
+
+
+0:00
+/ 0:33
+
+
+ 下面开始实战。
+
+首先，我们创建dev分支，然后切换到dev分支：
+
+$ git checkout -b dev
+Switched to a new branch 'dev'
+git checkout命令加上-b参数表示创建并切换，相当于以下两条命令：
+
+$ git branch dev
+$ git checkout dev
+Switched to branch 'dev'
+然后，用git branch命令查看当前分支：
+
+$ git branch
+* dev
+  master
+git branch命令会列出所有分支，当前分支前面会标一个*号。
+
+然后，我们就可以在dev分支上正常提交，比如对readme.txt做个修改，加上一行：
+
+Creating a new branch is quick.
+然后提交：
+
+$ git add readme.txt 
+$ git commit -m "branch test"
+[dev fec145a] branch test
+ 1 file changed, 1 insertion(+)
+现在，dev分支的工作完成，我们就可以切换回master分支：
+
+$ git checkout master
+Switched to branch 'master'
+切换回master分支后，再查看一个readme.txt文件，刚才添加的内容不见了！因为那个提交是在dev分支上，而master分支此刻的提交点并没有变：
+
+git-br-on-master
+
+现在，我们把dev分支的工作成果合并到master分支上：
+
+$ git merge dev
+Updating d17efd8..fec145a
+Fast-forward
+ readme.txt |    1 +
+ 1 file changed, 1 insertion(+)
+git merge命令用于合并指定分支到当前分支。合并后，再查看readme.txt的内容，就可以看到，和dev分支的最新提交是完全一样的。
+
+注意到上面的Fast-forward信息，Git告诉我们，这次合并是“快进模式”，也就是直接把master指向dev的当前提交，所以合并速度非常快。
+
+当然，也不是每次合并都能Fast-forward，我们后面会讲其他方式的合并。
+
+合并完成后，就可以放心地删除dev分支了：
+
+$ git branch -d dev
+Deleted branch dev (was fec145a).
+删除后，查看branch，就只剩下master分支了：
+
+$ git branch
+* master
+因为创建、合并和删除分支非常快，所以Git鼓励你使用分支完成某个任务，合并后再删掉分支，这和直接在master分支上工作效果是一样的，但过程更安全。
+//分支使用
+
+Git鼓励大量使用分支：
+
+查看分支：git branch
+
+创建分支：git branch <name>
+
+切换分支：git checkout <name>
+
+创建+切换分支：git checkout -b <name>
+
+合并某分支到当前分支：git merge <name>
+
+删除分支：git branch -d <name>
+
+工作区和暂存区
+
+Git和其他版本控制系统如SVN的一个不同之处就是有暂存区的概念。
+
+先来看名词解释。
+
+工作区（Working Directory）
+
+就是你在电脑里能看到的目录，比如我的learngit文件夹就是一个工作区：
+
+working-dir
+
+版本库（Repository）
+
+工作区有一个隐藏目录.git，这个不算工作区，而是Git的版本库。
+
+Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有Git为我们自动创建的第一个分支master，以及指向master的一个指针叫HEAD。
+
+git-repo
+
+文件往版本库添加 两部执行 ：
+第一步是用git add把文件添加进去，实际上就是把文件修改添加到暂存区；
+第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
+因为我们创建Git版本库时，Git自动为我们创建了唯一一个master分支，所以，现在，git commit就是往master分支上提交更改。
+可有理解为，需要提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改。
