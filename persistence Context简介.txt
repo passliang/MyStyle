@@ -1,0 +1,29 @@
+Persistence Context
+
+ Persistence context是由一组受托管的实体对象实例所构成的集合。它受entity manager 的管理。Entity manager追踪persistence context中所有对象的修改和更新情况，并根据指定的flush模式（本章稍后会做讨论）将这些修改保存到数据库中。一旦persistence context被关闭，所有实体对象实例都会脱离EntityManager而成为非托管对象。对象一旦从persistence context中脱离，就不再受entity manager管理了，任何对此对象的状态变更也将不会被同步到数据库。
+
+Java Persistence中有两种类型的persistence context，分别是transaction-scoped persistence context和extended persistence context。
+Transaction-scoped persistence context
+的persistence context可能只在事务范围内存在，它们会在事务结束后被关闭。
+当事务结束时，transaction-scoped persistence context将被销毁，而所有的托管实体对象实例也将处于游离状态（detached）。只有受应用服务器管理的persistence context才可以是事务范围的。换言之，只有标注了@PersistenceContext注解（或是其XML的等价描述）的EntityManager实例才可以是事务范围的。
+EJB 3.0中，由于持久对象在脱离persistence context之后将自动变成值对象，因此也就没必要再使用该模式了。
+package javax.persistence;
+public enum PersistenceContextType
+{
+   TRANSACTION,
+   EXTENDED
+}
+public @interface PersistenceProperty {
+   String name();
+   String value();
+}
+@Target({METHOD, TYPE, FIELD}) @Retention(RUNTIME)
+public @interface PersistenceContext {
+   String name() default "";
+   String unitName() default "";
+   PersistenceContextType type() default TRANSACTION;
+   PersistenceProperty[] properties() default {};
+}
+@PersistenceContext与@PersistenceUnit的作用相仿，唯一的不同在于，注入的是EntityManager实例而非EntityManagerFactory。
+类型为EXTENDED的EntityManager只能注入到stateful session bean中。由于stateless session bean和message-driven bean是被缓存的，因而无法关闭persistence context，也无法释放任何受托管的实体实例。一个stateful session bean可以使用type属性为EXTENDED的@javax.persistence.PersistenceContext注解来获取extended context。
+如果在EJB中应用Java Persistence，我们强烈建议你使用@Persi- stenceContext注解或等价的XML描述。因为这些功能的目的便是让开发人员更加方便的使用entity bean。相比之下，使用EntityManagerFactory创建EntityManager则因为需要关注更多琐碎的细节而更容易出错
