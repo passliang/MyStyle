@@ -1,0 +1,56 @@
+/********************** 版权声明 *************************
+ * 文件名: ColspanRowspan.java
+ * 包名: tables.span
+ * 版权:	杭州华量软件  pdfDemo
+ * 职责:	
+ ********************************************************
+ *
+ * 创建者：peijd   创建时间：2016年7月4日 下午8:43:08
+ * 文件版本：V1.0 
+ *
+ *******************************************************/
+package tables.span;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+ 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+ 
+public class ColspanRowspan {
+ 
+    public static final String DEST = "results/tables/colspan_rowspan.pdf";
+ 
+    public static void main(String[] args) throws IOException, DocumentException {
+        File file = new File(DEST);
+        file.getParentFile().mkdirs();
+        new ColspanRowspan().createPdf(DEST);
+        System.out.println("export Over!");
+    }
+ 
+    public void createPdf(String dest) throws IOException, DocumentException {
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream(dest));
+        document.open();
+        PdfPTable table = new PdfPTable(4);
+        PdfPCell cell = new PdfPCell(new Phrase(" 1,1 "));
+        table.addCell(cell);
+        cell = new PdfPCell(new Phrase(" 1,2 "));
+        table.addCell(cell);
+        PdfPCell cell23 = new PdfPCell(new Phrase("multi 1,3 and 1,4"));
+        cell23.setColspan(2);
+        cell23.setRowspan(2);
+        table.addCell(cell23);
+        cell = new PdfPCell(new Phrase(" 2,1 "));
+        table.addCell(cell);
+        cell = new PdfPCell(new Phrase(" 2,2 "));
+        table.addCell(cell);
+        document.add(table);
+        document.close();
+    }
+}
