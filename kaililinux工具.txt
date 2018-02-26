@@ -1,0 +1,21 @@
+Kali Linux 秘籍：wizardforcel/kali-linux-cookbook-zh - 码云 - 开源中国Kali Linux Web
+https://gitee.com/wizardforcel/kali-linux-cookbook-zh 
+渗透秘籍：wizardforcel/kali-linux-web-pentest-cookbook-zh - 码云 - 开源中国Kali Linux
+https://gitee.com/wizardforcel/kali-linux-web-pentest-cookbook-zh
+无线安全入门指南：wizardforcel/kali-linux-wireless-pentest - 码云 - 开源中国Kali Linux
+https://gitee.com/wizardforcel/kali-linux-wireless-pentest
+网络扫描秘籍：wizardforcel/kali-linux-network-scanning-cookbook-zh - 码云 - 开源中国
+https://gitee.com/wizardforcel/kali-linux-network-scanning-cookbook-zh
+
+kali吧、backtrack渗透培训系列课程
+http://www.xcn.one/read/143.html
+2014Kali Linux渗透技术教程
+http://www.xcn.one/read/150.html
+
+kali linux从入门到精通课程地址：Kali渗透培训课程
+https://www.ichunqiu.com/course/1353?from=zh
+https://www.ichunqiu.com/course/1353?from=zh
+
+ 1  2  3  4 5  6  7 8
+ 
+ 13000,14000,15000,16000,17000,18000

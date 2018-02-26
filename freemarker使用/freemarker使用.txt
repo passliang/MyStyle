@@ -1,0 +1,124 @@
+FreeMarker 是一个模板 技术 
+* FreeMarker与Web容器无关
+* 它不仅可以用作表现层的实现技术，而且还可以用于生成XML，JSP或Java 
+
+* velocity 也是一个模板技术， 没有freemarker 有名 
+
+struts2 视图技术 同时 支持 JSP、FreeMarker 、Velocity 
+JSP 文件 扩展名 .jsp 
+FreeMarker 模板扩展名 .ftl 
+Velocity 模板扩展名 .vm 
+
+* DLog4j 使用 velocity 制作开源博客系统 
+
+思想： 模板文件ftl + Java数据对象  ====== 生成HTML网页 
+
+下载 最新版本 freemarker 2.3.19  将lib/jar 复制 工程 
+
+模板文件 + 数据模型 = 输出 
+
+1、创建Configuration，生成模板实例
+	Configuration configuration = new Configuration();
+	configuration.setDirectoryForTemplateLoading(new File("ftl文件位置"));
+2、指定使用模板文件，生成Template实例
+	Template template = configuration.getTemplate("flt文件名");
+3、填充数据模型，数据模型就是一个Map
+	Map<String, String> map = new HashMap<String, String>();
+	map.put(key, value);
+4、调用Template实例process完成数据合并
+     template.process(map, 目标Writer输出流);
+
+安装freemarker_eclipseplugin 插件 
+* 将 freemarker_eclipseplugin 文件夹 复制 myeclipse/dropins 目录 
+* 重启myeclipse 
+
+编写ftl 过程中 通过 ${} 嵌入变量 
+
+条件判断：<#if 条件> 内容 </#if> 
+集合遍历：<#list 集合 as 每个对象> 每个对象 </#list>
+包含另一个页面 ： <#include "URL路径"> 
+
+数据不存在 <h1>Welcome ${user!"Anonymous"}!</h1> 处理 user不存在 输出 Anonymous 
+
+调用函数 ${"<a href='xxx'>link</a>"?html}
+
+应用一： 扩展struts2 模板
+<s:textfield> 生成 input  默认xhtml 生成tr , 使用simple，只生成input 
+需求： <s:textfield> 生成 <label> <input> 
+
+第一步 ： 在src下创建 template/itcast
+第二步 ： 创建 theme.properties
+parent = simple
+
+第三步：重写自己主题
+第四步：在页面中指定 主题 itcast
+
+应用二： 进行web优化，页面静态化  ******* 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

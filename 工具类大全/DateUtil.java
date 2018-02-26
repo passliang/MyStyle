@@ -8,44 +8,7 @@ import java.util.Date;
  * Created by schongking on 2017/7/10.
  */
 public class DateUtil {
-	
-	/**
-	  *
-	  *获取两个时间内相差的分钟数
-	  *
-	  */
-	public static String getDistanceTime(String str1, String str2, String pattern) {
-        if (pattern == null || pattern.equals("")) {
-            pattern = "yyyy-MM-dd HH:mm:ss";
-        }
-        DateFormat df = new SimpleDateFormat(pattern);
-        long day = 0;
-        long hour = 0;
-        long min = 0;
-        try {
-            Date one = df.parse(str1);
-            Date two = df.parse(str2);
-            long time1 = one.getTime();
-            long time2 = two.getTime();
-            long diff;
-            if (time1 < time2) {
-                diff = time2 - time1;
-            } else {
-                diff = time1 - time2;
-            }
-            day = diff / (24 * 60 * 60 * 1000);
-            hour = (diff / (60 * 60 * 1000) - day * 24);
-            min = ((diff / (60 * 1000)) - day * 24 * 60 - hour * 60);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if(day==0){
-            return hour*60+min+"" ;
-        }else{
 
-            return day*24*60+hour*60+min+"";
-        }
-    }
     /**
      * 获取当前时间
      * @return
