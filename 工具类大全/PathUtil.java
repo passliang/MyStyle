@@ -1,71 +1,48 @@
-package com.rd.p2p.core.user.model.baofoo.util;
+package com.iqurong.new51.app.util;
+
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
 /**
- * new File("..\path\abc.txt") 中的三个方法获取路径的方法 <br>
- * 1： getPath() 获取相对路径，例如 ..\path\abc.txt <br>
- * 2： getAbslutlyPath() 获取绝对路径，但可能包含 ".." 或 "." 字符，例如D:\otherPath\..\path\abc.txt <br>
- * 3： getCanonicalPath() 获取绝对路径，但不包含 ".." 或 "." 字符，例如 D:\path\abc.txt
- */
+ * 文件目录 工具类
+ * @author liangz
+ * @date 2018/1/2 15:16
+ **/
 public class PathUtil {
 
-	private static String webRootPath;
-	private static String rootClassPath;
+    static Logger logger = Logger.getLogger(PathUtil.class);
 
-	@SuppressWarnings("rawtypes")
-	public static String getPath(Class clazz) {
-		String path = clazz.getResource("").getPath();
-		return new File(path).getAbsolutePath();
-	}
+    /**
+     * 创建文件目录
+     * @param path
+     * @return
+     */
+    public static boolean createDir(String path){
+        if(path!=null&&!"".equals(path)){
+            File file = new File(path);
+            if(!file.exists()){
+                //目录不存在创建目录
+                if(file.mkdirs()){
+                    logger.info("目录路径："+path+"创建成功");
+                    return true;
+                }else{
+                    logger.error("创建路径出错");
+                    return  false;
+                }
+            }else{
+                logger.error("目录已存在");
 
-	public static String getPath(Object object) {
-		String path = object.getClass().getResource("").getPath();
-		return new File(path).getAbsolutePath();
-	}
+            }
+        }else{
+            logger.error("无效的路径");
+            return  false;
+        }
 
-	public static String getRootClassPath() {
-		if (rootClassPath == null) {
-			try {
-				String path = PathUtil.class.getClassLoader().getResource("").toURI().getPath();
-				rootClassPath = new File(path).getAbsolutePath();
-			} catch (Exception e) {
-				String path = PathUtil.class.getClassLoader().getResource("").getPath();
-				rootClassPath = new File(path).getAbsolutePath();
-			}
-		}
-		return rootClassPath;
-	}
+        return false;
+    }
 
-	public static String getPackagePath(Object object) {
-		Package p = object.getClass().getPackage();
-		return p != null ? p.getName().replaceAll("\\.", "/") : "";
-	}
-
-	public static File getFileFromJar(String file) {
-		throw new RuntimeException("Not finish. Do not use this method.");
-	}
-
-	public static String getWebRootPath() {
-		if (webRootPath == null)
-			webRootPath = detectWebRootPath();
-		return webRootPath;
-	}
-
-	public static void setWebRootPath(String webRootPath) {
-		if (webRootPath == null)
-			return;
-		if (webRootPath.endsWith(File.separator))
-			webRootPath = webRootPath.substring(0, webRootPath.length() - 1);
-		PathUtil.webRootPath = webRootPath;
-	}
-
-	private static String detectWebRootPath() {
-		try {
-			String path = PathUtil.class.getResource("/").toURI().getPath();
-			return new File(path).getParentFile().getParentFile().getCanonicalPath();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public static void main(String[] args) {
+       System.out.println( createDir("D:\\daaada\\jiji\\sasa\\sa"));
+    }
 }
