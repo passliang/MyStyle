@@ -1,0 +1,13 @@
+#自定义通用参数（各个环境一样的参数）（先加载本配置文件，再覆盖加载环境配置文件）
+appConfig:
+  #阿里oss上传配置参数
+  aliOssConfig:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    accessKeyId: LTAIt3oUmDrHCliy
+    accessKeySecret: YVtrFTYHM6QMTPZ04jjVpnopXRnFWY
+    bucketName: qujieqian
+    key: EsignCompact/
+        #签署文件服务器保存路径 /usr/local/tomcat/webapps/qujieqian
+  signedFolderPrefix: D:\test\tomcat
+        #服务印章图片保存路径 /usr/local/tomcat/webapps/qujieqian
+  sealDataImagePath: D:\test\tomcat

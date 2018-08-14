@@ -1,0 +1,10 @@
+springboot
+
+springcloud
+
+RabbitMQ 消息队列
+	RabbitMQ是实现AMQP（高级消息队列协议）的消息中间件的一种
+	AMQP，Advanced Messag eQueuing Protocol，高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。消息中间件主要用于组件之间的解耦，消息的发送者无需知道消息使用者的存在，反之亦然。AMQP的主要特征是面向消息、队列、路由（包括点对点和发布/订阅）、可靠性、安全。
+	
+
+万事皆因忙中错，好人半自苦中来

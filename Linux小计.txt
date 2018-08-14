@@ -1,0 +1,588 @@
+linux(centos系统)小计
+//插件安装
+yum -y install lrzsz
+//插件安装 文本转化
+yum -y install dos2unix
+转化命令 dos2unix filename（文件名）
+
+//安装redis 
+Redis是c语言开发的，安装redis需要c语言的编译环境
+
+如果没有gcc需要在线安装：yum install gcc-c++
+
+第一步：获取源码包：wget http://download.redis.io/releases/redis-3.0.0.tar.gz
+
+第二步：解压缩redis：tar zxvf redis-3.0.0.tar.gz
+
+第三步：编译。进入redis源码目录(cd redis-3.0.0)。执行 make
+
+第四步：安装。make install PREFIX=/usr/local/redis
+
+#PREFIX参数指定redis的安装目录
+
+
+---简易安装--- 
+yum -y install redis  启动命令 redis-server &
+
+./7001/redis-server redis.conf &
+启动 特定路径下redis  命令 redis-server redis.conf & 后台运行 
+
+创建集群 
+./redis-trib.rb create --replicas 1 127.0.0.1:7001  127.0.0.1:7002  127.0.0.1:7003 127.0.0.1:7007  127.0.0.1:7004  127.0.0.1:7005  127.0.0.1:7006  127.0.0.1:7008
+$ chmod 777 redis-trib.rb 分配权限
+
+redis 安装目录下 启动客户端 
+./redis-cli -c -h 192.168.101.3 -p 7001 ，其中-c表示以集群方式连接redis，-h指定ip地址，-p指定端口号
+cluster nodes 查询集群结点信息
+cluster info 查询集群状态信息
+
+（2）添加主节点
+添加7007结点，参考集群结点规划章节添加一个“7007”目录作为新节点。
+
+执行下边命令：
+./redis-trib.rb add-node  127.0.0.1:7007 127.0.0.1:7001
+
+Hash 槽重新分配 
+//进入集群
+./redis-trib.rb reshard 127.0.0.1:7001
+第二步：输入要分配的槽数量
+第三步：输入接收槽的结点id 给谁分配 就输入 节点id
+例如：这里准备给7007分配槽，通过cluster nodes查看7007结点id为15b809eadae88955e36bcdbb8144f61bbbaf38fb
+输入：15b809eadae88955e36bcdbb8144f61bbbaf38fb
+第四步：输入源结点id  （从那个节点取出hash槽 分配） 选用 all 从所有的节点 获取进行分配 
+第五步：输入yes开始移动槽到目标结点id
+
+（3）向主节点添加从节点
+
+./redis-trib.rb add-node --slave --master-id 5727213373e894e12b3aa33778a92ddd2bde81bf  127.0.0.1:7008 127.0.0.1:7001
+ 
+3.7.	删除结点：
+
+./redis-trib.rb del-node 127.0.0.1:7005 4b45eb75c8b428fbd77ab979b85080146a9bc017
+
+删除已经占有hash槽的结点会失败，报错如下：
+[ERR] Node 127.0.0.1:7005 is not empty! Reshard data away and try again.
+
+需要将该结点占用的hash槽分配出去（参考hash槽重新分配章节）。
+
+
+可以使用 netstat -tnulp | grep redis和ps  aux | grep redis查看redis运行情况
+
+
+设置
+
+1)The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128
+
+2）WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add ‘vm.overcommit_memory = 1‘ to /etc/sysctl.conf and then reboot or run the command ‘sysctl vm.overcommit_memory=1‘ for this to take effect.
+
+解决：
+
+针对这两个问题，都要修改/etc/sysctl.conf文件，在文件末尾加入以下两句：
+
+net.core.somaxconn= 1024
+vm.overcommit_memory = 1
+
+3）WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command ‘echo never > /sys/kernel/mm/transparent_hugepage/enabled‘ as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+
+解决：其实警告信息已经说的很明白了。
+
+临时解决：root用户执行echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+永久解决：将上面这句话写入到/etc/rc.local文件中。
+
+修改完成后要重启redis。
+
+ 
+ 
+echo 511 > /proc/sys/net/core/somaxconn
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+
+redis 集群重新启动 
+集群建立后，每个节点会自动生成对应的nodes-xxxx.conf 配置文件，集群重新启动的时候，只要一次启动之前的每个节点，redis集群就可以正常使用了
+
+
+
+
+-- 安装jdk
+yum install java-1.8.0-openjdk
+
+//安装解压版 jdk 
+配置 环境变量
+vi /etc/profile
+export JAVA_HOME=/usr/local/develope/java/jdk1.8.0_171
+
+export PATH=$PATH:$JAVA_HOME/bin
+
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+export JAVA_HOME PATH CLASSPATH
+
+重新编译环境变量
+
+source /etc/profile
+
+-- 安装nginx
+yum -y install epel-release
+yum install nginx 启动命令 nginx
+安装后搜索配置文件路径 
+find / -name nginx.conf
+
+upstream tomcat_server1 {
+            server 192.168.101.5:8080;
+        }
+#配置一个代理即tomcat2服务器
+    upstream tomcat_server2 {
+            server 192.168.101.6:8080;
+        }
+
+#配置一个虚拟主机
+    server {
+        listen 80;
+        server_name aaa.test.com;
+        location / {
+				#域名aaa.test.com的请求全部转发到tomcat_server1即tomcat1服务上
+                proxy_pass http://tomcat_server1;
+				#欢迎页面，按照从左到右的顺序查找页面
+                index index.jsp index.html index.htm;
+        }
+
+    }
+
+    server {
+        listen 80;
+        server_name bbb.test.com;
+
+        location / {
+				 #域名bbb.test.com的请求全部转发到tomcat_server2即tomcat2服务上
+                  proxy_pass http://tomcat_server2;
+                  index index.jsp index.html index.htm;
+        }
+    }
+
+
+
+upstream tomcat_server_pool{
+        server 127.0.0.1:8080 weight=10;
+        server 127.0.0.1:8081 weight=10;
+		server 127.0.0.1:8082 weight=10;
+        }
+
+    server {
+        listen 80;
+        server_name mytomcatsolr.com;
+        location / {
+                 proxy_pass  http://tomcat_server_pool/solr/;
+                 index admin.jsp admin.html admin.htm;
+        }
+    }
+
+upstream myServer {   
+
+    server 127.0.0.1:9090 down; 
+    server 127.0.0.1:8080 weight=2; 
+    server 127.0.0.1:6060; 
+    server 127.0.0.1:7070 backup; 
+}
+
+在需要使用负载的Server节点下添加
+
+proxy_pass http://myServer;
+
+upstream 每个设备的状态:
+
+down 表示单前的server暂时不参与负载 
+weight  默认为1.weight越大，负载的权重就越大。 
+max_fails ：允许请求失败的次数默认为1.当超过最大次数时，返回proxy_next_upstream 模块定义的错误 
+fail_timeout:max_fails 次失败后，暂停的时间。 
+backup： 其它所有的非backup机器down或者忙的时候，请求backup机器。所以这台机器压力会最轻。
+
+
+-- 安装vsftpd服务
+yum -y install vsftpd
+
+-- 创建vsftpd用户
+用户:ftpuser 密码:ftpuser
+
+
+//实用功能
+
+mv a b 将a文件移动到b目录下 
+
+
+tar –xvf file.tar       // 解压 tar包    
+tar -zxvf file.tar.gz    // 解压tar.gz    
+tar -jxvf file.tar.bz2   // 解压 tar.bz2    
+tar –Zxvf file.tar.Z    // 解压tar.Z    
+
+
+chown -R mysql mysql-5.7.21/
+
+chgrp -R mysql mysql-5.7.21/  /usr/local/develope/mysql-5.7.21/bin
+
+[root@localhost mysql]$ bin/mysql_install_db --user=mysql --basedir=/usr/local/develope/mysql-5.7.21/ --datadir=/usr/local/develope/mysql-5.7.21/data/
+
+
+/usr/local/develope/mysql-5.7.21/bin
+
+./bin/mysqld --user=mysql --basedir=/usr/local/develope/mysql-5.7.21/ --datadir=/usr/local/develope/mysql-5.7.21/data/  --initialize
+
+  
+-- 启动数据库服务
+service mysqld start
+-- 创建远程数据库连接用户名和密码:
+grant all on *.* to 'tan_taotao'@'%' identified by 'tan_taotao';
+-- 强制刷新
+flush privileges;
+
+
+-- 启动数据库服务
+service mysqld start
+-- 创建远程数据库连接用户名和密码:
+grant all on *.* to 'tan_taotao'@'%' identified by 'tan_taotao';
+-- 强制刷新
+flush privileges;
+
+
+
+[mysql]  
+# 设置mysql客户端默认字符集  
+default-character-set=utf8   
+socket=/var/lib/mysql/mysql.sock  
+  
+[mysqld]  
+skip-name-resolve  
+#设置3306端口  
+port = 3306   
+socket=/var/lib/mysql/mysql.sock  
+# 设置mysql的安装目录  
+basedir=/usr/local/mysql  
+# 设置mysql数据库的数据的存放目录  
+datadir=/usr/local/mysql/data  
+# 允许最大连接数  
+max_connections=200  
+# 服务端使用的字符集默认为8比特编码的latin1字符集  
+character-set-server=utf8  
+# 创建新表时将使用的默认存储引擎  
+default-storage-engine=INNODB  
+lower_case_table_name=1  
+max_allowed_packet=16M  
+
+
+[mysql]
+# 设置mysql客户端默认字符集
+default-character-set=utf8 
+socket=/var/lib/mysql/mysql.sock
+[mysqld]
+skip-name-resolve
+#设置3306端口
+port = 3306 
+socket=/var/lib/mysql/mysql.sock
+# 设置mysql的安装目录
+basedir=/usr/local/develope/mysql5.6
+# 设置mysql数据库的数据的存放目录
+datadir=/usr/local/develope/mysql5.6/data
+# 允许最大连接数
+max_connections=200
+# 服务端使用的字符集默认为8比特编码的latin1字符集
+character-set-server=utf8
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB 
+lower_case_table_names=1
+max_allowed_packet=16M
+
+
+chown -R mysql:
+
+chown -R mysql mysql-5.6.39 ./ 
+
+
+chown -R mysql:mysql-5.6.39 ./ 
+chown -R mysql mysql-5.6.39/
+
+chgrp -R mysql mysql-5.6.39/  /usr/local/develope/mysql-5.7.21/bin
+
+
+
+#mysql 启动
+ /usr/local/develope/mysql-5.6.39/bin/mysqld_safe defaults-file='/etc/my.cnf'
+ 
+ 
+ 重启命令：
+1、reboot
+2、shutdown -r now 立刻重启(root用户使用)
+3、shutdown -r 10 过10分钟自动重启(root用户使用) 
+4、shutdown -r 20:35 在时间为20:35时候重启(root用户使用)
+如果是通过shutdown命令设置重启的话，可以用shutdown -c命令取消重启
+
+关机命令：
+1、halt   立刻关机
+2、poweroff  立刻关机
+3、shutdown -h now 立刻关机(root用户使用)
+4、shutdown -h 10 10分钟后自动关机
+如果是通过shutdown命令设置关机的话，可以用shutdown -c命令取消重启
+ 
+free -m 查看剩余可用内村 ‘ 
+top 查看任务占用内存  M 从大向小排列
+
+rpm -qa | grep "redis"  查询 redis安装文件路径 
+rpm -ql redis-3.2.10-2.el7.x86_64 查询安装文件的分配路径
+ll 查看目录下文件详情 
+
+8305 
+8396 
+1241
+
+复制命令
+问题记录 
+cp: omitting directory ‘jdk1.8.0_171’
+cp -r 加个参数（-r 参数表示 递归复制 ） 
+
+cp redis-cli redis-server /usr/local/develope/redis-cluster/7001 
+
+
+cp redis-cli redis-server /usr/local/develope/redis-cluster/7002 
+
+
+cp redis-cli redis-server /usr/local/develope/redis-cluster/7003 
+
+cp redis-cli redis-server /usr/local/develope/redis-cluster/7004 
+
+
+cp redis-cli redis-server /usr/local/develope/redis-cluster/7005 
+
+cp redis-cli redis-server /usr/local/develope/redis-cluster/7006 
+
+Linux 删除文件夹和文件的命令
+-r 就是向下递归，不管有多少级目录，一并删除
+-f 就是直接强行删除，不作任何提示的意思
+
+删除文件夹实例：
+rm -rf /var/log/httpd/access
+将会删除/var/log/httpd/access目录以及其下所有文件、文件夹
+
+删除文件使用实例：
+rm -f /var/log/httpd/access.log
+将会强制删除/var/log/httpd/access.log这个文件
+
+
+//授权 给目录下文件
+chmod -R 700 /usr/local/develope/
+
+查询启动信息 
+netstat -tnulp | grep redis和ps  aux | grep redis查看redis运行情况
+端口式搜索
+netstat -tlnp | grep "9092"
+
+<!--配置jndi告诉solr工程我们的solrhome的位置-->
+<env-entry>
+	<env-entry-name>solr/home</env-entry-name>
+	<env-entry-value>/usr/local/develope/java/solrhome/solr</env-entry-value>
+	<env-entry-type>java.lang.String</env-entry-type>
+</env-entry>
+
+git 安装 
+Git是一个开源的分布式版本控制系统，可以有效、高速的处理从很小到非常大的项目版本管理。而国外的GitHub和国内的Coding都是项目的托管平台。但是在使用Git工具的时候，第一步要学会如何安装git，本教程就手把手教大家如何手动编译安装git。
+
+1、介绍
+
+　　使用Coding管理项目，上面要求使用的git版本为1.8.0以上，而很多yum源上自动安装的git版本为1.7，所以需要掌握手动编译安装git方法。
+
+2、安装git依赖包
+
+　　yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker
+
+3、删除已有的git
+
+　　yum remove git
+
+4、下载git源码
+
+　　切换到你的包文件存放目录下
+
+　　　　cd /usr/src
+
+　　下载git安装包
+
+　　　　wget https://www.kernel.org/pub/software/scm/git/git-2.8.3.tar.gz
+
+　　解压git安装包
+
+　　　　tar -zxvf git-2.8.3.tar.gz
+
+　　　　cd git-2.8.3
+
+　　配置git安装路径
+
+　　　　./configure prefix=/usr/local/git/
+
+　　编译并且安装
+
+　　　　make && make install
+
+　　查看git版本号
+
+　　git --version
+
+　　git已经安装完毕
+
+5、将git指令添加到bash中
+
+　　vi /etc/profile
+
+　　在最后一行加入
+
+　　export PATH=$PATH:/usr/local/git/bin
+
+　　让该配置文件立即生效
+
+　　source /etc/profile
+
+UI界面管理zookeeper工具
+
+1.Java JDK版本
+java -version
+
+
+java version "1.7.0_79"
+Java(TM) SE Runtime Environment (build 1.7.0_79-b15)
+Java HotSpot(TM) 64-Bit Server VM (build 24.79-b02, mixed mode)
+
+2.安装maven
+# 下载安装 maven3
+
+
+wget http://mirror.bit.edu.cn/apache/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz
+tar zxvf apache-maven-3.5.0-bin.tar.gz
+mv apache-maven-3.5.0 /usr/local/maven3
+1
+2
+3
+wget http://mirror.bit.edu.cn/apache/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz
+tar zxvf apache-maven-3.5.0-bin.tar.gz
+mv apache-maven-3.5.0 /usr/local/maven3
+# 添加到全局 vim /etc/profile
+
+
+MAVEN_HOME=/usr/local/maven3
+export MAVEN_HOME
+export PATH=${PATH}:${MAVEN_HOME}/bin
+1
+2
+3
+MAVEN_HOME=/usr/local/maven3
+export MAVEN_HOME
+export PATH=${PATH}:${MAVEN_HOME}/bin
+# 生效 source /etc/profile
+
+#查看版本 mvn -v
+
+
+Apache Maven 3.5.0 (ff8f5e7444045639af65f6095c62210b5713f426; 2017-04-04T03:39:06+08:00)
+Maven home: /usr/local/maven3
+Java version: 1.7.0_45, vendor: Oracle Corporation
+Java home: /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.45.x86_64/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "2.6.32-431.el6.x86_64", arch: "amd64", family: "unix"
+
+3.zkui部署
+
+
+git clone https://github.com/DeemOpen/zkui.git
+cd zkui/
+mvn clean install
+mv target /usr/local/zkui
+cp config.cfg /usr/local/zkui/
+
+vim /usr/local/zkui/config.cfg
+
+#指定端口
+serverPort=9090
+#zookeeper
+zkServer=192.168.8.100:2181
+#设置登录用户及其权限
+userSet = {"users": [{ "username":"admin" , "password":"12345678","role": "ADMIN" },{ "username":"appconfig" , "password":"87654321","role": "USER" }]}
+
+管理员权限-帐号：admin
+管理员权限-密码: 12345678
+
+用户权限-帐号：appconfig
+用户权限-密码: 87654321
+
+4.启动服务
+
+
+cd /usr/local/zkui
+java -jar zkui-2.0-SNAPSHOT-jar-with-dependencies.jar
+1
+2
+cd /usr/local/zkui
+java -jar zkui-2.0-SNAPSHOT-jar-with-dependencies.jar
+# 后台运行服务
+
+
+cd /usr/local/zkui
+nohup java -jar zkui-2.0-SNAPSHOT-jar-with-dependencies.jar &
+1
+2
+cd /usr/local/zkui
+nohup java -jar zkui-2.0-SNAPSHOT-jar-with-dependencies.jar &
+5.浏览器访问
+
+http://192.168.8.100:9090/
+
+lrzsz软件
+yum -y install lrzsz
+rz 文件选择进行上传 
+sz 文件名 选择下载
+
+kafka 
+
+启动 ：./bin/kafka-server-start.sh config/server.properties
+
+后台启动 ： ./bin/kafka-server-start.sh -daemon config/server1.properties &
+./bin/kafka-server-start.sh -daemon config/server2.properties &
+./bin/kafka-server-start.sh -daemon config/server3.properties &
+
+nohup ./bin/kafka-server-start.sh config/server1.properties &> out.log &
+nohup ./bin/kafka-server-start.sh config/server2.properties &> out.log &
+nohup ./bin/kafka-server-start.sh config/server3.properties &> out.log &
+
+
+zookeeper.connect=localhost:2181,localhost:2182,localhost:2183
+
+
+
+21
+
+启动一个生产者进程来发送消息
+    [root@master kafka_2.10-0.8.2.2]# bin/kafka-console-producer.sh --broker-list localhost:9092 --topic mytest-topic
+
+    其中，（1）参数broker-list定义了生产者要推送消息的broker地址，以<IP地址:端口>形式 ，由上面的broker的配置文件可知                                      为localhost:9092；
+
+		  （2）参数topic指定生产者发送给哪个topic。   
+
+		  
+启动一个消费者进程来消费消息
+    需要另外打开一个终端：    
+
+    [root@master kafka_2.10-0.8.2.2]# bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic mytest-topic --from-beginning
+
+   其中，（1）参数zookeeper指定了连接zookeeper的地址，以<IP地址:端口>形式；
+
+		 （2）topic参数指定了从哪个topic来pull消息。
+
+     当你执行这个命令之后，你便可以看到控制台上打印出的生产者生产的消息：
+
+     消费者配置文件consumer.properties关键属性：
+
+     # Zookeeper connection string
+     # comma separated host:port pairs, each corresponding to a zk
+     # server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002"
+        zookeeper.connect=localhost:2181
+    # timeout in ms for connecting to zookeeper
+      zookeeper.connection.timeout.ms=60000
+    #consumer group id
+      group.id=test-consumer-group
+	  
+	  ps -aux | grep 'kafka'

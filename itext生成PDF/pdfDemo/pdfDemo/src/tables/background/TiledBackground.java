@@ -1,0 +1,88 @@
+/********************** 版权声明 *************************
+ * 文件名: TiledBackground.java
+ * 包名: tables.background
+ * 版权:	杭州华量软件  pdfDemo
+ * 职责:	
+ ********************************************************
+ *
+ * 创建者：peijd   创建时间：2016年7月4日 下午7:57:11
+ * 文件版本：V1.0 
+ *
+ *******************************************************/
+package tables.background;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPCellEvent;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPatternPainter;
+import com.itextpdf.text.pdf.PdfWriter;
+ 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+ 
+public class TiledBackground {
+ 
+    class TiledImageBackground implements PdfPCellEvent {
+ 
+        protected Image image;
+ 
+        public TiledImageBackground(Image image) {
+            this.image = image;
+        }
+ 
+        public void cellLayout(PdfPCell cell, Rectangle position,
+                PdfContentByte[] canvases) {
+            try {
+                PdfContentByte cb = canvases[PdfPTable.BACKGROUNDCANVAS];
+                PdfPatternPainter patternPainter = cb.createPattern(image.getScaledWidth(), image.getScaledHeight());
+                image.setAbsolutePosition(0, 0);
+                patternPainter.addImage(image);
+                cb.saveState();
+                cb.setPatternFill(patternPainter);
+                cb.rectangle(position.getLeft(), position.getBottom(), position.getWidth(), position.getHeight());
+                cb.fill();
+                cb.restoreState();
+            } catch (DocumentException e) {
+                throw new ExceptionConverter(e);
+            }
+        }
+ 
+    }
+ 
+    public static final String DEST = "results/tables/tiled_pattern.pdf";
+    public static final String IMG1 = "resources/images/ALxRF.png";
+    public static final String IMG2 = "resources/images/bulb.gif";
+ 
+    public static void main(String[] args) throws IOException, DocumentException {
+        File file = new File(DEST);
+        file.getParentFile().mkdirs();
+        new TiledBackground().createPdf(DEST);
+        System.out.println("export Over!");
+    }
+ 
+    public void createPdf(String dest) throws IOException, DocumentException {
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream(dest));
+        document.open();
+        PdfPTable table = new PdfPTable(2);
+        PdfPCell cell = new PdfPCell();
+        Image image = Image.getInstance(IMG1);
+        cell.setCellEvent(new TiledImageBackground(image));
+        cell.setFixedHeight(770);
+        table.addCell(cell);
+        cell = new PdfPCell();
+        image = Image.getInstance(IMG2);
+        cell.setCellEvent(new TiledImageBackground(image));
+        cell.setFixedHeight(770);
+        table.addCell(cell);
+        document.add(table);
+        document.close();
+    }
+}

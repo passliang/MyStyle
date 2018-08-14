@@ -1,4 +1,45 @@
 
+Git 相关设置 
+
+git config  --global user.name "liangz"
+
+git config  --global user.email "1311552105@qq.com"
+
+//生成公私密匙
+ssh-keygen -t rsa -b 4096 -C "1311552105@qq.com"
+
+//添加远程库
+git remote add origin git@github.com:passliang/firstgit.git
+git@github.com:passliang/firstgit.git
+
+要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
+
+关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
+
+此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改
+
+要克隆一个仓库，首先必须知道仓库的地址，然后使用git clone命令克隆。
+
+Git支持多种协议，包括https，但通过ssh支持的原生git协议速度最快。
+
+查看分支：git branch
+
+创建分支：git branch <name>
+
+切换分支：git checkout <name>
+
+创建+切换分支：git checkout -b <name>
+
+合并某分支到当前分支：git merge <name>
+
+删除分支：git branch -d <name>
+
+分支进行合并 $ git merge  当git无法自动合并冲突时  需要手动解决冲突 在进行合并
+
+（）$ git merge --no-ff -m "merge with no-ff" dev
+合并分支时，加上--no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并
+
+相关命令
 mkdir name ---新建文件夹
 cd name --- 进入文件夹
 git init 初始化仓库

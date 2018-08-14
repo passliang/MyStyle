@@ -1,0 +1,110 @@
+Ctrl+ F 局部搜索
+CTRL+SHIFT +F  全局搜索
+Alt+enter 代码提示
+Ctrl+O  重写方法 
+Ctrl+l 实现方法
+Ctrl+Alt +T 环绕方法
+
+激活idea 
+1. 到网站 http://idea.lanyus.com/ 获取注册码。
+2.license server:
+　　http://intellij.mandroid.cn/
+　　http://idea.imsxm.com/
+　　http://idea.iteblog.com/key.php
+以上方法验证均可以
+
+1 智能提示
+
+Intellij首当其冲的当然就是Intelligence智能！基本的代码提示用Ctrl+Space，还有更智能地按类型信息提示Ctrl+Shift+Space，但因为Intellij总是随着我们敲击而自动提示，所以很多时候都不会手动敲这两个快捷键(除非提示框消失了)。用F2/ Shift+F2移动到有错误的代码，Alt+Enter快速修复(即Eclipse中的Quick Fix功能)。当智能提示为我们自动补全方法名时，我们通常要自己补上行尾的反括号和分号，当括号嵌套很多层时会很麻烦，这时我们只需敲Ctrl+Shift+Enter就能自动补全末尾的字符。而且不只是括号，例如敲完if/for时也可以自动补上{}花括号。
+最后要说一点，Intellij能够智能感知Spring、Hibernate等主流框架的配置文件和类，以静制动，在看似“静态”的外表下，智能地扫描理解你的项目是如何构造和配置的。
+2 重构
+
+Intellij重构是另一完爆Eclipse的功能，其智能程度令人瞠目结舌，比如提取变量时自动检查到所有匹配同时提取成一个变量等。尤其看过《重构-改善既有代码设计》之后，有了Intellij的配合简直是令人大呼过瘾！也正是强大的智能和重构功能，使Intellij下的TDD开发非常顺畅。
+切入正题，先说一个无敌的重构功能大汇总快捷键Ctrl+Shift+Alt+T，叫做Refactor This。按法有点复杂，但也符合Intellij的风格，很多快捷键都要双手完成，而不像Eclipse不少最有用的快捷键可以潇洒地单手完成(不知道算不算Eclipse的一大优点)，但各位用过Emacs的话就会觉得也没什么了(非Emacs黑)。此外，还有些最常用的重构技巧，因为太常用了，若每次都在Refactor This菜单里选的话效率有些低。比如Shift+F6直接就是改名，Ctrl+Alt+V则是提取变量。
+3 代码生成
+
+这一点类似Eclipse，虽不是独到之处，但因为日常使用频率极高，所以还是罗列在榜单前面。常用的有fori/sout/psvm+Tab即可生成循环、System.out、main方法等boilerplate样板代码，用Ctrl+J可以查看所有模板。后面“辅助”一节中将会讲到Alt+Insert，在编辑窗口中点击可以生成构造函数、toString、getter/setter、重写父类方法等。这两个技巧实在太常用了，几乎每天都要生成一堆main、System.out和getter/setter。
+另外，Intellij IDEA 13中加入了后缀自动补全功能(Postfix Completion)，比模板生成更加灵活和强大。例如要输入for(User user : users)只需输入user.for+Tab。再比如，要输入Date birthday = user.getBirthday();只需输入user.getBirthday().var+Tab即可。
+4 编辑
+
+编辑中不得不说的一大神键就是能够自动按语法选中代码的Ctrl+W以及反向的Ctrl+Shift+W了。此外，Ctrl+Left/Right移动光标到前/后单词，Ctrl+[/]移动到前/后代码块，这些类Vim风格的光标移动也是一大亮点。以上Ctrl+Left/Right/[]加上Shift的话就能选中跳跃范围内的代码。Alt+Forward/Backward移动到前/后方法。还有些非常普通的像Ctrl+Y删除行、Ctrl+D复制行、Ctrl+</>折叠代码就不多说了。
+关于光标移动再多扩展一点，除了Intellij本身已提供的功能外，我们还可以安装ideaVim或者emacsIDEAs享受到Vim的快速移动和Emacs的AceJump功能(超爽！)。另外，Intellij的书签功能也是不错的，用Ctrl+Shift+Num定义1-10书签(再次按这组快捷键则是删除书签)，然后通过Ctrl+Num跳转。这避免了多次使用前/下一编辑位置Ctrl+Left/Right来回跳转的麻烦，而且此快捷键默认与Windows热键冲突(默认多了Alt，与Windows改变显示器显示方向冲突，一不小心显示器就变成倒着显式的了，冏啊)。
+5 查找打开
+
+类似Eclipse，Intellij的Ctrl+N/Ctrl+Shift+N可以打开类或资源，但Intellij更加智能一些，我们输入的任何字符都将看作模糊匹配，省却了Eclipse中还有输入*的麻烦。最新版本的IDEA还加入了Search Everywhere功能，只需按Shift+Shift即可在一个弹出框中搜索任何东西，包括类、资源、配置项、方法等等。
+类的继承关系则可用Ctrl+H打开类层次窗口，在继承层次上跳转则用Ctrl+B/Ctrl+Alt+B分别对应父类或父方法定义和子类或子方法实现，查看当前类的所有方法用Ctrl+F12。
+要找类或方法的使用也很简单，Alt+F7。要查找文本的出现位置就用Ctrl+F/Ctrl+Shift+F在当前窗口或全工程中查找，再配合F3/Shift+F3前后移动到下一匹配处。
+Intellij更加智能的又一佐证是在任意菜单或显示窗口，都可以直接输入你要找的单词，Intellij就会自动为你过滤。
+6 其他辅助
+
+以上这些神键配上一些辅助快捷键，即可让你的双手90%以上的时间摆脱鼠标，专注于键盘仿佛在进行钢琴表演。这些不起眼却是至关重要的最后一块拼图有：
+Ø  命令：Ctrl+Shift+A可以查找所有Intellij的命令，并且每个命令后面还有其快捷键。所以它不仅是一大神键，也是查找学习快捷键的工具。
+Ø  新建：Alt+Insert可以新建类、方法等任何东西。
+Ø  格式化代码：格式化import列表Ctrl+Alt+O，格式化代码Ctrl+Alt+L。
+Ø  切换窗口：Alt+Num，常用的有1-项目结构，3-搜索结果，4/5-运行调试。Ctrl+Tab切换标签页，Ctrl+E/Ctrl+Shift+E打开最近打开过的或编辑过的文件。
+Ø  单元测试：Ctrl+Alt+T创建单元测试用例。
+Ø  运行：Alt+Shift+F10运行程序，Shift+F9启动调试，Ctrl+F2停止。
+Ø  调试：F7/F8/F9分别对应Step into，Step over，Continue。
+此外还有些我自定义的，例如水平分屏Ctrl+|等，和一些神奇的小功能Ctrl+Shift+V粘贴很早以前拷贝过的，Alt+Shift+Insert进入到列模式进行按列选中。
+7 最终榜单
+
+这榜单阵容太豪华了，后几名都是如此有用，毫不示弱。
+Ø  Top #10切来切去：Ctrl+Tab
+Ø  Top #9选你所想：Ctrl+W
+Ø  Top #8代码生成：Template/Postfix +Tab
+Ø  Top #7发号施令：Ctrl+Shift+A
+Ø  Top #6无处藏身：Shift+Shift
+Ø  Top #5自动完成：Ctrl+Shift+Enter
+Ø  Top #4创造万物：Alt+Insert
+太难割舍，前三名并列吧！
+Ø  Top #1智能补全：Ctrl+Shift+Space
+Ø  Top #1自我修复：Alt+Enter
+Ø  Top #1重构一切：Ctrl+Shift+Alt+T
+
+
+你是否在寻找更有效率的编程方法？ 使用键盘来代替鼠标执行操作并不是一个秘密，这将节省您大量的时间。 如果你只是想执行一次操作，那么这不是什么大不了的事情。但是如果你每天多次使用相同的操作呢？如果将所有这些操作都加起来，就将会对您的生产力产生很大的影响。
+
+我几乎用键盘快捷键来完成我的大部分操作。在我年轻的时候，玩了半职业的实时战略电脑游戏，包括星际争霸和魔兽争霸III。 星际争霸中流行APM（每分钟操作数） ，它计算了玩家每分钟执行的动作数量。 通过使用工具，可以通过记录APM来判断玩家是使用鼠标操作还是使用键盘和鼠标的操作组合。 通常，使用键盘和鼠标组合玩法的玩家获得游戏胜利的概率要比仅通过鼠标点击的玩家获胜概率要高。
+
+那么这和代码以及IntelliJ有什么关系呢？通过上面的例子，我相信你可以联想到，通过学习和使用键盘快捷键来执行所需要的操作，可以有效地提高代码开发的效率。 您可以在IntelliJ上查看快捷键，也可以通过监视器查看您最常用操作的效率指南。 这些信息是非常有用的，但是马上改变你的习惯可能有点困难。为了帮助您，我将在本文介绍一下我最常用的IntelliJ快捷键。你可以先熟悉这些，再慢慢学习其他快捷键。
+
+语句感知选择器
+
+快捷键： CTRL+W / CMD+W
+作用：这可以用来选中上下文代码。当你需要选择大块或只是一段代码的特定部分时，它可以起到非常棒的作用。如果您有以下代码： files.getFiles().forEach(auctionFile->createAuctionFile(realm,auctionFile));，您可以将光标置于 auctionFile中并按下快捷键，它将选择 auctionFile。 再按一次，选择将展开并选中 auctionFile->createAuctionFile(realm,auctionFile)。 如果再次按下，则选择将继续展开并选中 files.getFiles().forEach(auctionFile->createAuctionFile(realm,auctionFile))。 再按最后一次，你就会完整地选中这段代码。如果你把它与SHIFT结合，你也可以通过上下文来取消选择。
+最近浏览的文件
+
+快捷键： CTRL+E / CMD+E
+作用：这会弹出一个窗口，其中包含了您在IDE中最近打开过的文件。如果你输入一下内容，它会根据名称进行过滤。
+跳转到声明位置
+
+快捷键： CTRL+B / CMD+B
+作用：如果您将光标放在类、方法或者变量中，然后使用该快捷键，就能立即跳转到元素的声明位置。
+完成整句
+
+快捷键： CTRL+SHIFT+ENTER/ CMD+SHIFT+ENTER
+作用：这个快捷键将尝试完成您当前编写的语句。如何做到？它会通过添加大括号或分号，以及换行来完成。例如：如果有以下语句： System.out.print()，按快捷键一次，将为该语句添加结束分号。再举一个例子： if(condition==true)，按快捷键则会添加打开和关闭的大括号，并将光标放到 if语句的主体内部，并附加额外的缩进。
+跳到到类
+
+快捷键： CTRL+N / CMD+N
+作用：这个快捷键允许你在你的项目中按你输入的名字来搜索Java文件。如果将它与 SHIFT集合使用，那么将搜索所有文件。在其上添加 ALT，那么将搜索符号。在搜索区域中，可以使用CameHumps表示法（仅输入类名的大写字母）来过滤文件。
+智能类型补全
+
+快捷键： CTRL+SHIFT+SPACE/ CMD+SHIFT+SPACE
+作用：我之前没有提到它，但是我想你已经熟悉了通过 CTRL+SPACE/ CMD+SPACE来完成自动补全。如果你在上面的快捷键中增加一个 SHIFT，将获得更智能的补全操作。这意味着IDE将尝试匹配适合当前上下文的预期类型，并过滤所有其他选项。
+回退
+
+快捷键： CTRL+ALT+← / CMD+ALT+←
+作用：这个快捷键可以让您像使用浏览器一样的导航那样，退回到上一次浏览的地方。它会记住你的光标所在位置，甚至导航到其他文件。
+前进
+
+快捷键： CTRL+ALT+→ / CMD+ALT+→
+作用：这类类似于上面的导航功能，但是是“向前”导航，而不是回退。
+高亮所用之处
+
+快捷键： CTRL+SHIFT+F7 / CMD+SHIFT+F7
+作用：把光标放在某个元素中，按下快捷键之后，IDE将高亮显示所选元素所有出现过的地方。
+除了上面的快捷键之外，还有非常多有用的快捷键，几乎每一个在Intellij中的操作都有一个等同的快捷键。 我们很难一下全部学习到位，需要一定的时间和练习。 我每个星期都还在学习新东西，如果由于某种原因，我几天没有编写代码，我忘记了我学到的快捷键。 所以我们需要不断的练习，练习，练习！ 尝试持续地学习来掌握它们，而不是一气呵成。这还是很容易能够办到的！
+
+另外，还有一个IntelliJ的插件，它可以告诉您在使用鼠标时还可以使用的快捷键。这个插件叫Key Promoter，但不幸的是，它似乎不再维护了。也许我可以更新它的最新IntelliJ版本。我还想在效率指南中看到更多快捷键或鼠标执行的操作。如果我找到空闲的时间，也许我可以做到。
+ 
