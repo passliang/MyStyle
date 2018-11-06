@@ -218,3 +218,64 @@ git-repo
 第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
 因为我们创建Git版本库时，Git自动为我们创建了唯一一个master分支，所以，现在，git commit就是往master分支上提交更改。
 可有理解为，需要提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改。
+
+
+
+
+
+------------------------------------------------------bug解决----------------------------------------------------------------------
+1 error: src refspec master does not match any 
+当前目录是个空目录 无法提交  add  ---  commit  文件
+
+
+2 Warning: Permanently added the RSA host key for 
+
+
+IP address '192.30.255.112' to the list of known hosts.
+警告本地host文件中没有 该IP 添加 即可
+192.30.255.112　　github.com  
+
+3 Could not resolve hostname github.com: Non-recoverable failure in name resolution
+fatal: Could not read from remote repository.
+
+step1. ping github.com 
+获取到github.com的ip为192.30.252.128 
+step2. 在/etc/hosts中添加一行如下: 
+192.30.252.128 github.com
+
+4 RT ! [rejected] master -> master (fetch first)
+在push远程服务器的时候发现出现此错误；原因是没有同步远程的master
+所以我们需要先同步一下
+
+ git commit 过程中Changes not staged for commit:
+需要先git add 后在commit 然后 push
+整个流程：
+$ git add menudd //其中 menudd 是一个目录 也可以是文件 会自动更新有修改的文件
+
+然后 $ git commit -m "asdf" //“asdf”是更新注释
+最后 $ git push origin master 
+ok完成 更新成功
+3. git remote add [name] [url]
+
+
+5  
+$ git push -u origin master
+To github.com:passliang/firstgit.git
+ ! [rejected]        master -> master (non-fast-forward)
+error: failed to push some refs to 'git@github.com:passliang/firstgit.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+解决方案 
+$ git push -u -f  origin master
+Counting objects: 6, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (6/6), 508 bytes | 0 bytes/s, done.
+Total 6 (delta 0), reused 0 (delta 0)
+To github.com:passliang/firstgit.git
+ + cfb6a26...de86fcb master -> master (forced update)
+Branch master set up to track remote branch master from origin.
+
